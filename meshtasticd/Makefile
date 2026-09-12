@@ -3,14 +3,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=meshtasticd
-PKG_VERSION:=2.7.26
-PKG_SOURCE_VERSION:=v$(PKG_VERSION).54e0d8d
+PKG_VERSION:=2.8.1
+PKG_SOURCE_VERSION:=709da723ce9bb269d0cf971b09320d00975f3eeb
 PKG_RELEASE:=1
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_URL:=https://github.com/meshtastic/firmware.git
-PKG_MIRROR_HASH:=dc1d9843514b92590eaac0a329208b699e330522688215cfc8441c8945de4782
+PKG_SOURCE_URL:=https://github.com/cheaterenator/firmware.git
+PKG_MIRROR_HASH:=skip
 
 FRONTEND_VERSION:=2.6.7
 FRONTEND_DEST:=$(PKG_NAME)-frontend-$(FRONTEND_VERSION).tar
@@ -36,7 +36,7 @@ define Package/meshtasticd/Default
   CATEGORY:=Network
   SUBMENU:=Meshtastic
   TITLE:=Meshtastic daemon
-  URL:=https://github.com/meshtastic/firmware
+  URL:=https://github.com/cheaterenator/firmware
 endef
 
 # Leaving a possibility for adding a light variant without the web UI support if
