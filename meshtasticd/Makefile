@@ -108,6 +108,7 @@ PLATFORMIO_BUILD_FLAGS := \
 	-lssl \
 	-lulfius \
 	-lyder \
+	-ljsoncpp \
 	$(if $(CONFIG_USE_GLIBC),,-largp) \
 	$(if $(INTL_FULL),-lintl)
 
