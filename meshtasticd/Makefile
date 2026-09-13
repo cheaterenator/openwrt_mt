@@ -58,6 +58,7 @@ define Package/meshtasticd-full
     +libyaml-cpp \
     +libyder \
     +zlib \
+	+jsoncpp \
     $(INTL_DEPENDS)
   PROVIDES:=meshtasticd
 endef
