@@ -58,7 +58,6 @@ define Package/meshtasticd-full
     +libyaml-cpp \
     +libyder \
     +zlib \
-	+jsoncpp \
     $(INTL_DEPENDS)
   PROVIDES:=meshtasticd
 endef
@@ -108,7 +107,6 @@ PLATFORMIO_BUILD_FLAGS := \
 	-lssl \
 	-lulfius \
 	-lyder \
-	-ljsoncpp \
 	$(if $(CONFIG_USE_GLIBC),,-largp) \
 	$(if $(INTL_FULL),-lintl)
 
