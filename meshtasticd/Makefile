@@ -140,11 +140,20 @@ define Build/Compile/meshtasticd-full
 	mkdir -p $(PKG_BUILD_DIR)/full
 
 	$(BUILD_FLAGS) \
+	PATH="$(TOOLCHAIN_DIR)/bin:$$PATH" \
+	CC="$(TARGET_CC)" \
+	CXX="$(TARGET_CXX)" \
+	LD="$(TARGET_CROSS)ld" \
+	AR="$(TARGET_CROSS)ar" \
+	RANLIB="$(TARGET_CROSS)ranlib" \
+	STRIP="$(TARGET_CROSS)strip" \
+	CROSS_COMPILE="$(TARGET_CROSS)" \
 	PLATFORMIO_BUILD_DIR="$(PKG_BUILD_DIR)/full" \
 	PLATFORMIO_BUILD_FLAGS="$(PLATFORMIO_BUILD_FLAGS)" \
+	env | sort |grep -iE 'CC|CXX|LD=|^AR|PATH|STAGING|TARGET_CROSS'; \
 	$(HOST_PYTHON3_BIN) -m platformio run \
-		--environment native-openwrt \
-		--project-dir $(PKG_BUILD_DIR)
+			--environment native-openwrt \
+			--project-dir $(PKG_BUILD_DIR)
 endef
 
 define Build/Compile
