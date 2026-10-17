@@ -133,6 +133,7 @@ endef
 
 define Build/Prepare
 	$(call Build/Prepare/Default)
+	$(CP) ./files/platformio-openwrt.ini $(PKG_BUILD_DIR)/variants/native/openwrt.ini
 	$(call Build/Prepare/meshtasticd-web)
 endef
 
@@ -140,7 +141,6 @@ define Build/Compile/meshtasticd-full
 	mkdir -p $(PKG_BUILD_DIR)/full
 
 	$(BUILD_FLAGS) \
-	PATH="$(TOOLCHAIN_DIR)/bin:$$PATH" \
 	CC="$(TARGET_CC)" \
 	CXX="$(TARGET_CXX)" \
 	LD="$(TARGET_CROSS)ld" \
@@ -150,9 +150,8 @@ define Build/Compile/meshtasticd-full
 	CROSS_COMPILE="$(TARGET_CROSS)" \
 	PLATFORMIO_BUILD_DIR="$(PKG_BUILD_DIR)/full" \
 	PLATFORMIO_BUILD_FLAGS="$(PLATFORMIO_BUILD_FLAGS)" \
-	env | sort |grep -iE 'CC|CXX|LD=|^AR|PATH|STAGING|TARGET_CROSS'; \
 	$(HOST_PYTHON3_BIN) -m platformio run \
-			--environment native-openwrt \
+			--environment buildroot-openwrt \
 			--project-dir $(PKG_BUILD_DIR)
 endef
 
@@ -176,7 +175,7 @@ define Package/meshtasticd-full/install
 	$(INSTALL_BIN) ./files/meshtasticd.init $(1)/etc/init.d/meshtasticd
 
 	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/full/buildroot/meshtasticd $(1)/usr/bin/meshtasticd
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/full/buildroot-openwrt/meshtasticd $(1)/usr/bin/meshtasticd
 endef
 
 define Package/meshtasticd-avahi-service/install
