@@ -3,14 +3,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=meshtasticd
-PKG_VERSION:=2.7.26
-PKG_SOURCE_VERSION:=v$(PKG_VERSION).54e0d8d
+PKG_VERSION:=2.8.2
+PKG_SOURCE_VERSION:=f54c8974f931b94ef7b282bf12d2b1d20fcc3741
 PKG_RELEASE:=1
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_URL:=https://github.com/meshtastic/firmware.git
-PKG_MIRROR_HASH:=dc1d9843514b92590eaac0a329208b699e330522688215cfc8441c8945de4782
+PKG_SOURCE_URL:=https://github.com/cheaterenator/firmware.git
+PKG_MIRROR_HASH:=skip
 
 FRONTEND_VERSION:=2.6.7
 FRONTEND_DEST:=$(PKG_NAME)-frontend-$(FRONTEND_VERSION).tar
@@ -36,7 +36,7 @@ define Package/meshtasticd/Default
   CATEGORY:=Network
   SUBMENU:=Meshtastic
   TITLE:=Meshtastic daemon
-  URL:=https://github.com/meshtastic/firmware
+  URL:=https://github.com/cheaterenator/firmware
 endef
 
 # Leaving a possibility for adding a light variant without the web UI support if
@@ -110,6 +110,7 @@ PLATFORMIO_BUILD_FLAGS := \
 	$(if $(CONFIG_USE_GLIBC),,-largp) \
 	$(if $(INTL_FULL),-lintl)
 
+
 BUILD_FLAGS := \
 	TARGET_AR="$(TARGET_AR)" \
 	TARGET_AS="$(TARGET_CC) -c $(TARGET_ASFLAGS)" \
@@ -132,6 +133,7 @@ endef
 
 define Build/Prepare
 	$(call Build/Prepare/Default)
+	$(CP) ./files/platformio-openwrt.ini $(PKG_BUILD_DIR)/variants/native/openwrt.ini
 	$(call Build/Prepare/meshtasticd-web)
 endef
 
@@ -139,11 +141,18 @@ define Build/Compile/meshtasticd-full
 	mkdir -p $(PKG_BUILD_DIR)/full
 
 	$(BUILD_FLAGS) \
+	CC="$(TARGET_CC)" \
+	CXX="$(TARGET_CXX)" \
+	LD="$(TARGET_CROSS)ld" \
+	AR="$(TARGET_CROSS)ar" \
+	RANLIB="$(TARGET_CROSS)ranlib" \
+	STRIP="$(TARGET_CROSS)strip" \
+	CROSS_COMPILE="$(TARGET_CROSS)" \
 	PLATFORMIO_BUILD_DIR="$(PKG_BUILD_DIR)/full" \
 	PLATFORMIO_BUILD_FLAGS="$(PLATFORMIO_BUILD_FLAGS)" \
 	$(HOST_PYTHON3_BIN) -m platformio run \
-		--environment buildroot \
-		--project-dir $(PKG_BUILD_DIR)
+			--environment buildroot-openwrt \
+			--project-dir $(PKG_BUILD_DIR)
 endef
 
 define Build/Compile
@@ -166,7 +175,7 @@ define Package/meshtasticd-full/install
 	$(INSTALL_BIN) ./files/meshtasticd.init $(1)/etc/init.d/meshtasticd
 
 	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/full/buildroot/meshtasticd $(1)/usr/bin/meshtasticd
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/full/buildroot-openwrt/meshtasticd $(1)/usr/bin/meshtasticd
 endef
 
 define Package/meshtasticd-avahi-service/install
